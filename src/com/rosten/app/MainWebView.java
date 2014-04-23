@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,7 +23,12 @@ public class MainWebView extends Activity {
 	private WebView webView;
 	private Handler handler;
 	private ProgressDialog pd;
-
+	
+	public void call(String tele) {
+		Intent intent = new Intent("android.intent.action.CALL",Uri.parse("tel:" + tele));
+		startActivity(intent);
+	}
+	
 	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +100,7 @@ public class MainWebView extends Activity {
 		webView = (WebView) findViewById(R.id.mainWebView);
 		webView.getSettings().setJavaScriptEnabled(true);// 可用JS
 		
-		webView.addJavascriptInterface(new WebJsClass(), "androidPhone");
+		webView.addJavascriptInterface(this, "androidPhone");
 		
 		webView.setScrollBarStyle(0);// 滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
 		webView.setWebViewClient(new WebViewClient() {
