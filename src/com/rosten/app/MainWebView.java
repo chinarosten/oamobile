@@ -38,9 +38,9 @@ public class MainWebView extends Activity {
 
 		// 执行初始化函数，本地地址：10.0.2.2
 		init();
-//		loadurl(webView, "http://60.190.203.85:8088/himsweb/login/mobileLogin");
+		loadurl(webView, "http://60.190.203.85:8088/himsweb/login/mobileLogin");
 //		loadurl(webView, "http://10.0.2.2:8080/himsweb/login/mobileLogin");
-		loadurl(webView, "http://10.71.16.60:8080/himsweb/login/mobileLogin");
+//		loadurl(webView, "http://192.168.0.106:8080/himsweb/login/mobileLogin");
 
 		handler = new Handler() {
 //			public void handleMessage(Message msg) {
