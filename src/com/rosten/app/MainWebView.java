@@ -5,34 +5,31 @@ import com.rosten.rostenoa.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class MainWebView extends Activity {
 
 	private WebView webView;
-	private Handler handler;
-	private ProgressDialog pd;
+	private ProgressBar progressBar; 
 	
 	public void call(String tele) {
-		Intent intent = new Intent("android.intent.action.CALL",Uri.parse("tel:" + tele));
+		Intent intent=new Intent(); 
+		intent.setAction(Intent.ACTION_CALL);
+		intent.setData(Uri.parse("tel:"+tele));
 		startActivity(intent);
 	}
 	
-	@SuppressLint("HandlerLeak")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_webview);
 
@@ -41,23 +38,6 @@ public class MainWebView extends Activity {
 		loadurl(webView, "http://60.190.203.85:8088/himsweb/login/mobileLogin");
 //		loadurl(webView, "http://10.0.2.2:8080/himsweb/login/mobileLogin");
 //		loadurl(webView, "http://192.168.0.106:8080/himsweb/login/mobileLogin");
-
-		handler = new Handler() {
-//			public void handleMessage(Message msg) {
-//				// 定义一个Handler，用于处理下载线程与UI间通讯
-//				if (!Thread.currentThread().isInterrupted()) {
-//					switch (msg.what) {
-//					case 0:
-//						pd.show();// 显示进度对话框
-//						break;
-//					case 1:
-//						pd.hide();// 隐藏进度对话框，不可使用dismiss()、cancel(),否则再次调用show()时，显示的对话框小圆圈不会动。
-//						break;
-//					}
-//				}
-//				super.handleMessage(msg);
-//			}
-		};
 	}
 
 	@Override
@@ -98,8 +78,10 @@ public class MainWebView extends Activity {
 	@SuppressLint({ "SetJavaScriptEnabled", "JavascriptInterface" })
 	public void init() {
 		webView = (WebView) findViewById(R.id.mainWebView);
-		webView.getSettings().setJavaScriptEnabled(true);// 可用JS
 		
+		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+		
+		webView.getSettings().setJavaScriptEnabled(true );// 可用JS
 		webView.addJavascriptInterface(this, "androidPhone");
 		
 		webView.setScrollBarStyle(0);// 滚动条风格，为0就是不给滚动条留空间，滚动条覆盖在网页上
@@ -122,26 +104,18 @@ public class MainWebView extends Activity {
 		});
 		webView.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {// 载入进度改变而触发
+				setTitle("页面加载中，请稍候..." + progress + "%");
+				MainWebView.this.setProgress(progress * 100);
 				if (progress == 100) {
-					handler.sendEmptyMessage(1);// 如果全部载入,隐藏进度对话框
+					setTitle(R.string.app_name);
+					progressBar.setVisibility(4);
 				}
 				super.onProgressChanged(view, progress);
 			}
 		});
-
-//		pd = new ProgressDialog(MainWebView.this);
-//		pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//		pd.setMessage("数据载入中，请稍候！");
 	}
 
 	public void loadurl(final WebView view, final String url) {
 		view.loadUrl(url);// 载入网页
-		
-//		new Thread() {
-//			public void run() {
-//				handler.sendEmptyMessage(0);
-//				view.loadUrl(url);// 载入网页
-//			}
-//		}.start();
 	}
 }
